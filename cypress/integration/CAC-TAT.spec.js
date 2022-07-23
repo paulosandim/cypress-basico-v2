@@ -113,27 +113,38 @@ describe('Central de Atendimento ao Cliente TAT', () => {
         .last().uncheck().should('not.be.checked')
     })
 
-    it.only('seleciona um arquivo da pasta fixtures', () => {
-        cy.get('input[id="file-upload"]').selectFile('cypress/fixtures/example.json')
-        .then(input => {
-            expect(input[0].files[0].name).to.equal('example.json')
+    it('seleciona um arquivo da pasta fixtures', () => {
+        cy.get('input[id="file-upload"]').should('not.have.value')
+        .selectFile('cypress/fixtures/example.json')
+        .should($input => {
+            expect($input[0].files[0].name).to.equal('example.json')
         })
     })
 
-    it.only('seleciona um arquivo simulando um drag-and-drop', () => {
-        cy.get('input[id="file-upload"]')
+    it('seleciona um arquivo simulando um drag-and-drop', () => {
+        cy.get('input[id="file-upload"]').should('not.have.value')
         .selectFile('cypress/fixtures/example.json', { action: 'drag-drop' })
-        .then(input => {
-            expect(input[0].files[0].name).to.equal('example.json')
+        .should($input => {
+            expect($input[0].files[0].name).to.equal('example.json')
         })
     })
 
-    it.only('seleciona um arquivo utilizando uma fixture para a qual foi dada um alias', () => {
+    it('seleciona um arquivo utilizando uma fixture para a qual foi dada um alias', () => {
         cy.fixture('example.json', { encoding: null }).as('exampleFile')
-        cy.get('input[id="file-upload"]').selectFile('@exampleFile')
-        .then(input => {
-            expect(input[0].files[0].name).to.equal('example.json')
+        cy.get('input[id="file-upload"]').should('not.have.value')
+        .selectFile('@exampleFile')
+        .should($input => {
+            expect($input[0].files[0].name).to.equal('example.json')
         })
+    })
+
+    it.only('verifica que a política de privacidade abre em outra aba sem a necessidade de um clique', () => {
+        cy.get('#privacy a').should('have.attr', 'target', '_blank')
+    })
+
+    it.only('acessa a página da política de privacidade removendo o target e então clicanco no link', () => {
+        cy.get('#privacy a').invoke('removeAttr', 'target').click()
+        cy.contains('Talking About Testing').should('be.visible')
     })
 
 })
